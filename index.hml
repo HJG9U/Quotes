@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Korean Quotes</title>
+    <meta name="keyword" content="Notion, 노션, 한국어 명언 위젯, 노션 커스텀 위젯,unbroken2650">
+    <meta name="description" content="Notion에서 사용할 수 있는 한국어 명언 위젯입니다.">
+    <meta name="author" content="unbroken2650">
+
+    <meta property="og:title" content="Notion 한국어 명언 위젯">
+    <meta property="og:description" content="Notion에서 사용할 수 있는 한국어 명언 위젯입니다.">
+    <meta property="og:type" content="website">
+    <meta property="og:image" content="https://i.ibb.co/LZ1tWyJ/Image.png">
+    <link rel="stylesheet" href="main.css">
+
+</head>
+
+<body>
+    <div id="bg">
+        <img id="image" src="https://i.ibb.co/G0RT85C/background-Image-1.jpg" alt="배경이미지입니다.">
+        <div id="quote">
+            <p id="quote_1">한국어 명언 위젯입니다.</p>
+            <p id="quote_2">5분마다 새로운 명언으로 바뀝니다.</p>
+            <p id="refreshButton" onclick="resetQuote()"><img id="refreshImage"
+                    src="https://i.ibb.co/pRc2cVz/refresh-2-48.png" alt="새로고침"></p>
+        </div>
+    </div>
+    <script>
+        var images = [
+            "https://i.ibb.co/X5H2XqM/background-Image-5.jpg",
+            "https://i.ibb.co/M8TtNsq/background-Image-6.jpg",
+            "https://i.ibb.co/s9rT9SW/background-Image-7.jpg",
+            "https://i.ibb.co/G0RT85C/background-Image-1.jpg",
+            "https://i.ibb.co/PChYhMz/background-Image-2.jpg",
+            "https://i.ibb.co/1QvvcvH/background-Image-3.jpg",
+            "https://i.ibb.co/DKwdfnV/background-Image-4.jpg"
+        ]
+        ///배경 이미지 preload
+        function preload(images) {
+            let n = images.length;
+            for (let i = 0; i < n; i++) {
+                let img = new Image();
+                img.src = images[i];
+            }
+        };
+        preload(images);
+
+        const IMG_COUNT = images.length;
+
+        function randomInt(max) {
+            let num = Math.floor(Math.random(0, 1) * max);
+            return num;
+        }
+
+        function browseRandomImage() {
+            document.getElementById(
+                "image"
+            ).src = images[randomInt(IMG_COUNT)];
+        }
+
+        var quotes = [];
+        fetch('./data/quotes.json').then(res => res.json()).then(data => { quotes = data.quotes });
+
+
+        function browseRandomQuote(quotes) {
+            const quoteNumber = randomInt(quotes.length);
+            document.getElementById('quote_1').innerHTML = quotes[quoteNumber].quote;
+            document.getElementById('quote_2').innerHTML = quotes[quoteNumber].author;
+        }
+
+        const ONE_MINUTE = 1000 * 60;
+
+        function browseRandom() {
+            browseRandomImage();
+            browseRandomQuote(quotes);
+        }
+
+        function goRandom() {
+            setInterval(() => {
+                browseRandom();
+            }, ONE_MINUTE * 5)
+        }
+
+        function initialBrowse(initial) {
+            //안내 멘트 이후 5초 기다리기
+            if (initial) {
+                setTimeout(() => {
+                    browseRandom();
+                    goRandom();
+                }, 5000)
+            } else {
+                goRandom();
+            }
+        }
+
+        function resetQuote() {
+            clearInterval(goRandom);
+            browseRandom();
+            initialBrowse(false);
+        }
+
+        initialBrowse(true);
+
+
+
+    </script>
+</body>
+
+
+</html>
